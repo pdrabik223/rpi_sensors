@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <title>Movement Sensor</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #82bcfa, #2b4eff, #82bcfa);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #302b63;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-weight: 600;
+        }
+
+        .info-group {
+            margin-bottom: 25px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #24243e;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            opacity: 0.8;
+        }
+
+        .info-value {
+            background: linear-gradient(135deg, #f5f5f5, #eeeeee);
+            padding: 12px 15px;
+            border-radius: 8px;
+            color: #302b63;
+            font-size: 1.1em;
+            border-left: 4px solid #302b63;
+        }
+
+        input[type="color"] {
+            width: 60px;
+            height: 50px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .color-picker-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #e0e0e0;
+            outline: none;
+            margin-top: 8px;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #302b63;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #302b63;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .checkbox-label {
+            color: #302b63;
+            font-size: 1em;
+            cursor: pointer;
+        }
+
+        .save-button {
+            width: 100%;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #302b63, #24243e);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            margin-bottom: 15px;
+
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .save-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .save-button:active {
+            transform: translateY(0);
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 8px 12px;
+            margin-top: 8px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1em;
+            color: #c9c9c9;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #302b63;
+            box-shadow: 0 0 0 3px rgba(48, 43, 99, 0.1);
+        }
+
+        .night-mode-controls {
+
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(48, 43, 99, 0.05);
+            border-radius: 8px;
+        }
+
+        .night-mode-controls.visible {
+            display: block;
+        }
+
+        .time-input-group {
+            flex: 1;
+        }
+
+        .time-input-group label {
+            font-size: 0.85em;
+            color: #24243e;
+            font-weight: 600;
+        }
+
+        .color-picker-section {
+            display: block;
+        }
+
+        .color-picker-section.hidden {
+            display: none;
+        }
+
+        a {
+            color: #302b63;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        a:hover {
+            color: #24243e;
+            text-decoration: underline;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid rgba(48, 43, 99, 0.1);
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: nowrap;
+        }
+
+
+        .footer-credits {
+            font-size: 0.8em;
+            color: #24243e;
+            opacity: 0.5;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Motion Sensor</h1>
+
+        <div class="info-group">
+            <div class="info-label">Current Time</div>
+            <div class="info-value">{{local_time}}</div>
+        </div>
+
+        <div class="info-group">
+            <div class="info-label">Uptime</div>
+            <div class="info-value">{{uptime}}</div>
+        </div>
+
+
+        <button class="save-button" onclick="toggle_sensor()">▶️ Send signal</button>
+
+        <div class="footer">
+
+            <div class="footer-links">
+                <a href="https://github.com/pdrabik223/rpi_sensors" target="_blank">📖 GitHub</a>
+            </div>
+
+            <div class="footer-credits">
+                <div class="footer-credits">
+                    Powered by Raspberry Pi Pico W • v1.0.1
+                </div>
+            </div>
+        </div>
+
+        <script>
+
+            function toggle_sensor() {
+                fetch(`/v1/toggle_sensor`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+
+                }).then(data => {
+                    console.log(data);
+                }).catch(error => {
+                    alert('❌ Error animation: ' + error + "\nquery: " + `/v1/run_animation`)
+                });
+            }
+        </script>
+</body>
+
+</html>
